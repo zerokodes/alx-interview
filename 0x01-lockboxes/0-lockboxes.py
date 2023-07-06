@@ -8,35 +8,19 @@ def canUnlockAll(boxes=[]):
     """A function that returns True of all box in
     boxes can be opend
     """
-    if not boxes:
-        return False
+    num_boxes = len(boxes)
+    unlocked = [False] * num_boxes
+    unlocked[0] = True
 
-    keys = set([0])
-    for box_id, box in enumerate(boxes):
-        for key in box:
-            if key < len(boxes) and key != box_id:
-                keys.add(key)
+    stack = [0]  # Start with the first box
 
-    if len(keys) != len(boxes):
-        return False
+    while stack:
+        current_box = stack.pop()
+        keys = boxes[current_box]
 
-    return True
+        for key in keys:
+            if key >= 0 and key < num_boxes and not unlocked[key]:
+                unlocked[key] = True
+                stack.append(key)
 
-
-if __name__ == '__main__':
-    boxes = [
-                [1, 3],
-                [2],
-                [3, 0],
-                [1, 2, 3],
-            ]
-    print(unlockBoxes(boxes))
-
-    boxes = [[1], [2], [3], [4], []]
-    print(canUnlockAll(boxes))
-
-    boxes = [[1, 4, 6], [2], [0, 4, 1], [5, 6, 2], [3], [4, 1], [6]]
-    print(unlockBoxes(boxes))
-
-    boxes = [[1, 4], [2], [0, 4, 1], [3], [], [4, 1], [5, 6]]
-    print(unlockBoxes(boxes))
+    return all(unlocked)
